@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кредитный калькулятор</title>
+    <link rel="stylesheet" href="css/calc.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <section id="calculator" class="calculator">
+        <div class="container">
+            <div class="calculator__block">
+                <h2>Рассчитайте свой кредит</h2>
+                <div class="loan-calculator">
+                    <div class="parameter-block">
+                        <div class="input-group">
+                            <input class="input" required autocomplete="off" type="text" id="loanAmount" name="loanAmount">
+                            <label class="label" for="username">Сумма займа:</label>
+                        </div>
+
+                        <div class="button-group" data-type="loan-amount">
+                            <button data-type="loan-amount" data-value="300000" class="calculator-button" onclick="setLoanAmount('300 000', this)">300 тыс</button>
+                            <button data-type="loan-amount" data-value="1000000" class="calculator-button active" onclick="setLoanAmount('1 000 000', this)">1
+                                млн</button>
+                            <button data-type="loan-amount" data-value="3000000" class="calculator-button" onclick="setLoanAmount('3 000 000', this)">3 млн</button>
+                        </div>
+
+                    </div>
+
+                    <div class="parameter-block">
+
+                        <div class="input-group">
+                            <input class="input" required autocomplete="off" type="text" id="annualRate" name="annualRate">
+                            <label class="label" for="username">Годовая ставка (%):</label>
+                        </div>
+
+                        <div class="button-group">
+                            <button data-type="annual-rate" data-value="24" class="calculator-button active" onclick="setAnnualRate(24, this)">24%</button>
+                            <button data-type="annual-rate" data-value="42" class="calculator-button" onclick="setAnnualRate(42, this)">42%</button>
+                        </div>
+
+                    </div>
+
+                    <div class="parameter-block">
+
+                        <div class="input-group">
+                            <input class="input" required autocomplete="off" type="text" id="loanTerm" name="loanTerm" value="60">
+                            <label class="label" for="username" for="loanTerm">Срок займа (месяцев)</label>
+                        </div>
+
+
+                        <div class="button-group" data-type="loan-term">
+                            <button data-type="loan-term" data-value="24" class="calculator-button" onclick="setLoanTerm(24, this)">2 года</button>
+                            <button data-type="loan-term" data-value="36" class="calculator-button" onclick="setLoanTerm(36, this)">3 года</button>
+                            <button data-type="loan-term" data-value="60" class="calculator-button active" onclick="setLoanTerm(60, this)">5 лет</button>
+                            <button data-type="loan-term" data-value="240" class="calculator-button" onclick="setLoanTerm(240, this)">20 лет</button>
+                        </div>
+
+                    </div>
+
+                    <div class="result-block">
+                        <div class="result-br-block">
+                            <div class="result-flex-main">
+                                <div class="result-flex">
+                                    <div class="result-br">
+                                        <p>Минимальный платеж</p>
+                                        <div class="result-value"><span id="interestPayment"></span> ₽</div>
+                                    </div>
+                                    <div class="result-br">
+                                        <p>Аннуитетный платеж</p>
+                                        <div class="result-value"><span id="annuityPayment"></span> ₽</div>
+                                    </div>
+                                </div>
+                                <div class="result-text">
+                                    <p>*Настройки калькулятора позволяют задавать дополнительные параметры рассчета займа. Необходимо помнить, что рассчитанный калькулятором ежемесячный платеж может отличаться от суммы в графике платежей.</p>
+                                </div>
+                            </div>
+                            <div class="result-flex-main">
+                                <div class="result-flex-main-r">
+
+                                    <!-- <div class="btn-loan-take">
+                                        <button id="showModalButton" data-fancybox data-src="#calc">Получить займ</button>
+                                    </div> -->
+                                    <div class="form__popup" id="calc" style="display:none;max-width:500px;">
+                                        <div class="form popup__form">
+                                            <div class="form__title">Отправить заявку</div>
+                                            <form action="/telegram.php" method="POST" id="formMain" class="form__button-one">
+                                                <h2 class="section__title section__title_line">Закажите консультацию</h2>
+                                                <div class="form-left">
+                                                    <input name="fio" placeholder="Имя*" class="textbox name" required />
+                                                    <input name="email" placeholder="Email (Необязательно)" class="textbox email" type="email">
+                                                </div>
+                                                <div class="form-right">
+                                                    <input id="phone_2" name="phone" placeholder="Номер телефона*" class="textbox phone" type="tel" required />
+                                                    <input name="submit" class="button-one" type="submit" value="Заказать консультацию" />
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    // Обработчик события на кнопку "Получить кредит" для показа попап окна
+                                    document.getElementById("showModalButton").addEventListener("click", function() {
+                                        // Получаем значения из элементов в основной секции
+                                        const interestPaymentValue = document.getElementById("interestPayment")
+                                            .textContent;
+                                        const annuityPaymentValue = document.getElementById("annuityPayment")
+                                            .textContent;
+
+                                        // Получаем соответствующие элементы в попап окне
+                                        const popupInterestPayment = document.querySelector("#calc #interestPayment");
+                                        const popupAnnuityPayment = document.querySelector("#calc #annuityPayment");
+
+                                        // Копируем значения из основной секции в попап окно
+                                        popupInterestPayment.textContent = interestPaymentValue;
+                                        popupAnnuityPayment.textContent = annuityPaymentValue;
+
+                                        // Здесь можете добавить код для отображения попап окна
+                                        // Например, использовать сторонний плагин (например, Fancybox) для отображения попап окна
+                                    });
+                                </script>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </section>
+    <script src="/js/calc.js"></script>
+</body>
+</html>
